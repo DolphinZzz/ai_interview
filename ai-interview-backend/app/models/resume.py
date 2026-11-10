@@ -10,6 +10,7 @@ class Resume(BaseModel):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
     file_url = Column(String(500), nullable=True)
     file_name = Column(String(255), nullable=True)
+    extracted_text = Column(Text, nullable=True)  # PDF 工具直接抽取的原始文本
     parsed_content = Column(Text, nullable=True)  # AI 解析后的 JSON 结构化数据
     analysis = Column(Text, nullable=True)  # AI 分析 JSON（优劣势/建议）
     target_position = Column(String(255), nullable=True)

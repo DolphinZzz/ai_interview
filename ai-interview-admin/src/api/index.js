@@ -17,6 +17,12 @@ export const interviewApi = {
   delete: (id) => api.delete(`/interviews/${id}`)
 }
 
+export const resumeApi = {
+  list: (params) => api.get('/resumes', { params }),
+  detail: (id) => api.get(`/resumes/${id}`),
+  download: (id) => api.get(`/resumes/${id}/download`, { responseType: 'blob' })
+}
+
 // ── 题库管理 ─────────────────────────────────────────────────────
 export const questionBankApi = {
   list: (params) => api.get('/question-bank', { params }),

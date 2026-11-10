@@ -1,18 +1,27 @@
 import json
 import logging
 import os
+from pathlib import Path
 from typing import Dict
+from uuid import uuid4
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.resume import Resume
 from app.services.client.ai_service import AIService
 from app.exceptions.http_exceptions import NotFoundError, ValidationError
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
 # 简历上传目录
-UPLOAD_DIR = "uploads/resumes"
+UPLOAD_DIR = Path(settings.UPLOAD_ROOT) / "resumes"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+
+def sanitize_resume_filename(file_name: str) -> str:
+    """Keep only a safe display name; stored paths use generated identifiers."""
+    name = Path(str(file_name).replace("\\", "/")).name
+    return "".join(char for char in name if char >= " " and char != "\x7f") or "resume.pdf"
 
 
 class ResumeService:
@@ -27,15 +36,16 @@ class ResumeService:
     ) -> Dict:
         """上传简历文件并触发 AI 解析和分析"""
         # 保存文件到本地
-        file_path = os.path.join(UPLOAD_DIR, f"{user_id}_{file_name}")
+        display_name = sanitize_resume_filename(file_name)
+        file_path = Path(UPLOAD_DIR) / f"{user_id}_{uuid4().hex}.pdf"
         with open(file_path, "wb") as f:
             f.write(file_content)
 
         # 创建简历记录
         resume = Resume(
             user_id=user_id,
-            file_url=file_path,
-            file_name=file_name,
+            file_url=str(file_path),
+            file_name=display_name,
             target_position=target_position,
             status="parsing"
         )
@@ -45,9 +55,11 @@ class ResumeService:
 
         # 从 PDF 中提取文本
         try:
-            resume_text = ResumeService._extract_pdf_text(file_path)
+            resume_text = ResumeService._extract_pdf_text(str(file_path))
             if not resume_text.strip():
                 raise ValidationError(message="无法从 PDF 中提取文本内容")
+            resume.extracted_text = resume_text
+            await db.commit()
         except Exception as e:
             resume.status = "failed"
             await db.commit()
@@ -121,6 +133,7 @@ class ResumeService:
             "status": resume.status,
             "file_name": resume.file_name,
             "target_position": resume.target_position,
+            "extracted_text": resume.extracted_text,
             "parsed_content": parsed_content,
             "analysis": analysis,
             "created_at": resume.created_at.isoformat() if resume.created_at else None

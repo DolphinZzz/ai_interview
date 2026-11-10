@@ -87,6 +87,11 @@ BACKOFFICE_ROUTES = [
         tags=["backoffice-users"]
     ),
     RouteConfig(
+        module_path="app.api.backoffice.v1.resumes",
+        prefix=f"{settings.API_V1_STR}/backoffice/resumes",
+        tags=["backoffice-resumes"]
+    ),
+    RouteConfig(
         module_path="app.api.backoffice.v1.interviews",
         prefix=f"{settings.API_V1_STR}/backoffice/interviews",
         tags=["backoffice-interviews"]

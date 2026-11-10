@@ -10,6 +10,9 @@ services:
       - .env
     volumes:
       - ./logs:/app/logs
+      - uploads-data:/app/uploads
+    networks:
+      - app-network
     depends_on:
       redis:
         condition: service_healthy
@@ -32,6 +35,7 @@ services:
       - .env
     volumes:
       - ./logs:/app/logs
+      - uploads-data:/app/uploads
     networks:
       - app-network
     depends_on:
@@ -133,6 +137,8 @@ services:
       - monitoring
 
 volumes:
+  uploads-data:
+    driver: local
   postgres-data:
     driver: local
   redis-data:

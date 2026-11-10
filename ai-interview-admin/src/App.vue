@@ -13,6 +13,9 @@
         <router-link to="/interviews" active-class="active">
           <span class="nav-icon">🎤</span> 面试记录
         </router-link>
+        <router-link to="/resumes" active-class="active">
+          <span class="nav-icon">📋</span> 简历管理
+        </router-link>
         <div class="nav-section">知识库 RAG</div>
         <router-link to="/question-bank" active-class="active">
           <span class="nav-icon">📚</span> 题库管理

@@ -136,11 +136,11 @@ def create_app():
     app.mount("/client", client_docs_app)
     app.mount("/backoffice", backoffice_docs_app)
 
-    # 提供上传文件的静态访问（头像、简历等）
+    # 头像可公开访问；简历通过后台鉴权下载接口提供。
     from fastapi.staticfiles import StaticFiles
     import os
     os.makedirs("uploads/avatars", exist_ok=True)
-    app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+    app.mount("/uploads/avatars", StaticFiles(directory="uploads/avatars"), name="avatars")
 
     @app.exception_handler(APIException)
     async def api_exception_handler(request: Request, exc: APIException):

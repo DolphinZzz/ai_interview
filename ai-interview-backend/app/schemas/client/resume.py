@@ -14,5 +14,6 @@ class ResumeDetail(BaseSchema):
     status: str
     file_name: Optional[str] = None
     target_position: Optional[str] = None
+    extracted_text: Optional[str] = None
     parsed_content: Optional[Dict[str, Any]] = None
     created_at: Optional[str] = None

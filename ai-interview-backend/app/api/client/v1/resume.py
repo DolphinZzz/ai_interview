@@ -6,6 +6,7 @@ from app.services.client.resume_service import resume_service
 from app.schemas.response import ApiResponse
 from app.models.user import User
 from app.exceptions.http_exceptions import ValidationError
+from app.services.client.resume_service import sanitize_resume_filename
 
 router = APIRouter()
 
@@ -19,7 +20,8 @@ async def upload_resume(
 ):
     """上传简历 PDF 并触发 AI 解析"""
     # 验证文件类型
-    if not file.filename.lower().endswith(".pdf"):
+    file_name = sanitize_resume_filename(file.filename or "")
+    if not file_name.lower().endswith(".pdf"):
         raise ValidationError(message="仅支持 PDF 格式文件")
 
     # 验证文件大小（最大 10MB）
@@ -31,7 +33,7 @@ async def upload_resume(
         db=db,
         user_id=current_user.id,
         file_content=content,
-        file_name=file.filename,
+        file_name=file_name,
         target_position=target_position
     )
     return ApiResponse.success(data=result)

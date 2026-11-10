@@ -6,6 +6,8 @@ const routes = [
   { path: '/', name: 'Dashboard', component: () => import('../views/Dashboard.vue'), meta: { auth: true } },
   { path: '/users', name: 'Users', component: () => import('../views/Users.vue'), meta: { auth: true } },
   { path: '/interviews', name: 'Interviews', component: () => import('../views/Interviews.vue'), meta: { auth: true } },
+  { path: '/resumes', name: 'Resumes', component: () => import('../views/Resumes.vue'), meta: { auth: true } },
+  { path: '/resumes/:id', name: 'ResumeDetail', component: () => import('../views/ResumeDetail.vue'), meta: { auth: true } },
   { path: '/interviews/:id', name: 'InterviewDetail', component: () => import('../views/InterviewDetail.vue'), meta: { auth: true } },
 
   // 题库管理
